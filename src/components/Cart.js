@@ -1,9 +1,14 @@
-import React, { useState } from 'react'
-import CartItem from './CartItem'
+import React, { useState, useEffect } from 'react';
+import CartItem from './CartItem';
+import './Cart.css';
 
 function Cart({ initialItems }) {
+    const initialState = JSON.parse(window.localStorage.getItem("items"));
+    const [items, setItems] = useState(initialState || initialItems);
 
-    const [items, setItems] = useState(initialItems);
+    useEffect(() => {
+        window.localStorage.setItem("items", JSON.stringify(items));
+    }, [items]);
 
     const updateQty = (id, newQty) => {
         const newItems = items.map(item => {
@@ -23,13 +28,14 @@ function Cart({ initialItems }) {
 
     return (
         <div className="Cart">
+            <h1 className="Cart-title">Shopping Cart</h1>
             <div className="Cart-items">
-                {initialItems.map(item => (
+                {items.map(item => (
                     <CartItem updateQty={updateQty} key={item.id} {...item} />
                 ))}
             </div>
 
-            <h2>Grand Total: ${grandTotal}</h2>
+            <h2 className="Cart-total">Grand Total: ${grandTotal}</h2>
         </div>
     );
 }
